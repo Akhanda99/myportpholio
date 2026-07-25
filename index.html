@@ -555,6 +555,36 @@
   letter-spacing: 0.02em;
 }
 
+/* ============ Scroll-to-top button ============ */
+.to-top{
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px -6px rgba(11,37,69,0.5);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease, background 0.18s ease;
+  z-index: 900;
+}
+.to-top.show{
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.to-top:hover{ background: var(--accent); }
+.to-top svg{ width: 20px; height: 20px; stroke: #fff; fill: none; }
+
 </style>
 </head>
 <body>
@@ -599,7 +629,7 @@
           View Projects
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </a>
-        <a href="https://drive.google.com/" target="_blank" rel="noopener" class="btn btn-outline" id="cv-link">
+        <a href="https://drive.google.com/file/d/1yDI-XdJaYfR6bl5iL3d3OVujhu_50tlC/view?usp=sharing" target="_blank" rel="noopener" class="btn btn-outline" id="cv-link">
           CV
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>
         </a>
@@ -886,6 +916,13 @@
   </div>
 </section>
 
+<!-- Scroll to top -->
+<button class="to-top" id="toTop" aria-label="Back to top">
+  <svg viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 19V5M5 12l7-7 7 7"/>
+  </svg>
+</button>
+
 <!-- ============ CONTACT SECTION ============ -->
 <section class="contact" id="contact">
   <div class="contact-inner">
@@ -906,7 +943,7 @@
     <!-- Socials -->
     <div class="contact-socials">
       <!-- LinkedIn -->
-      <a class="social-link" href="https://www.linkedin.com/in/nashitakhanda" target="_blank" rel="noopener" aria-label="LinkedIn">
+      <a class="social-link" href="https://www.linkedin.com/in/nashitakhanda/" target="_blank" rel="noopener" aria-label="LinkedIn">
         <svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14zM8.34 17V9.8H6V17h2.34zM7.17 8.76a1.36 1.36 0 1 0 0-2.72 1.36 1.36 0 0 0 0 2.72zM18 17v-3.95c0-2.11-.45-3.73-2.92-3.73-1.18 0-1.98.65-2.3 1.26h-.04V9.8H10.5V17h2.34v-3.56c0-.94.18-1.85 1.34-1.85 1.15 0 1.16 1.07 1.16 1.91V17H18z"/></svg>
       </a>
       <!-- Facebook -->
@@ -1011,6 +1048,23 @@
   lightbox.addEventListener('click', e => { if (e.target === lightbox) closeVideo(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeVideo(); });
 })();
+
+  // ---- Scroll-to-top button ----
+  (function(){
+    const btn = document.getElementById('toTop');
+    if (!btn) return;
+
+    // show the button after scrolling down ~400px
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 400) btn.classList.add('show');
+      else btn.classList.remove('show');
+    });
+
+    // smooth slide to top on click
+    btn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  })();
 </script>
 
 </body>

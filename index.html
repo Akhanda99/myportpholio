@@ -585,6 +585,70 @@
 .to-top:hover{ background: var(--accent); }
 .to-top svg{ width: 20px; height: 20px; stroke: #fff; fill: none; }
 
+/* ============ First-visit video hint ============ */
+.video-hint{
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  background: var(--navy);
+  color: #fff;
+  font-family: var(--font-util);
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 0.55rem 2.2rem 0.55rem 0.9rem;
+  border-radius: 8px;
+  box-shadow: 0 10px 24px -8px rgba(11,37,69,0.55);
+  z-index: 20;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+  pointer-events: none;
+}
+.video-hint.show{
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -100%) translateY(-6px);
+  pointer-events: auto;
+  animation: hint-bob 1.6s ease-in-out infinite;
+}
+/* little pointer arrow at the bottom, aimed at the play button */
+.video-hint::after{
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 12px;
+  height: 12px;
+  background: var(--navy);
+}
+.video-hint .hint-close{
+  position: absolute;
+  top: 50%;
+  right: 0.5rem;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border: none;
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 21;
+}
+.video-hint .hint-close:hover{ background: rgba(255,255,255,0.35); }
+
+@keyframes hint-bob{
+  0%,100%{ transform: translate(-50%, -100%) translateY(-6px); }
+  50%    { transform: translate(-50%, -100%) translateY(-12px); }
+}
 </style>
 </head>
 <body>
@@ -611,16 +675,13 @@
 
       <div class="about-text">
         <p>
-          I'm doing my <strong>MSc in Computer Science</strong> at the <strong>University of Manitoba</strong>,
-          where I research <strong>Human-Robot Interaction</strong> in the HCI Lab under Dr. Houda Elmimouni.
-          Before this, I completed my undergraduate degree in <strong>Electronics and Communication Engineering</strong>
-          at Khulna University of Engineering and Technology (KUET).
+          I'm doing my MSc in Computer Science at the University of Manitoba, where my research focuses on Human-Robot Interaction (HRI) in the HCI Lab under the supervision of Dr. Houda Elmimouni. Before this, I completed my undergraduate degree in Electronics and Communication Engineering at Khulna University of Engineering and Technology (KUET), Bangladesh.
         </p>
         <p>
-          My work focuses on <strong>teleoperation for telepresence robots</strong>, designing control systems
-          that make them easier and more natural for first-time users to operate. More broadly, I'm interested
-          in social robots and the social-psychological side of human-robot interaction, from how people control
-          robots to how identity, comfort, and inclusion shape the way we interact through them.
+          My research spans both the technical and human aspects of Human-Robot Interaction (HRI), from developing robot control systems to understanding the social and psychological factors that shape robot-mediated interaction. My Master's thesis looks at teleoperation for telepresence robots, focusing on how to make them easier and more natural for first-time users to operate. I also explore how identity, comfort, and inclusion shape people's experience when interacting through a robot.
+        </p>
+        <p>
+          So far my work has centered on telepresence robots, but I'm interested in extending it to social robots more broadly, exploring how they can feel more engaging, approachable, and accessible to the people who use them.
         </p>
       </div>
 
@@ -750,9 +811,13 @@
 
       <!-- TiltControl -->
       <div class="project-row">
-        <div class="project-media video placeholder" data-video="assets/Tiltcontrol.mp4">
+        <div class="project-media video" data-video="assets/Tiltcontrol.mp4" id="firstCourseVideo">
           <img src="TiltControl.png" alt="TiltControl demo">
           <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="video-hint" id="videoHint">
+            Click ▶ to watch the demo
+            <button class="hint-close" id="hintClose" aria-label="Dismiss">✕</button>
+          </div>
         </div>
         <div class="project-text">
           <div class="project-tagrow">
@@ -1020,6 +1085,40 @@
       layer.appendChild(svg);
     });
   })();
+
+  // ---- First-visit video hint (scroll-into-view, dismissable, remembered) ----
+(function(){
+  const media = document.getElementById('firstCourseVideo');
+  const hint  = document.getElementById('videoHint').classList.add('show');
+  const close = document.getElementById('hintClose');
+  if (!media || !hint) return;
+
+  // don't show if already dismissed on a previous visit
+  let dismissed = false;
+  try { dismissed = localStorage.getItem('videoHintDismissed') === '1'; } catch(e){}
+  if (dismissed) return;
+
+  function dismiss(){
+    hint.classList.remove('show');
+    try { localStorage.setItem('videoHintDismissed', '1'); } catch(e){}
+  }
+
+  // show when the video scrolls into view (once)
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting){
+        hint.classList.add('show');
+        io.disconnect(); // only trigger once
+      }
+    });
+  }, { threshold: 0.5 });
+  io.observe(media);
+
+  // dismiss on ✕
+  close.addEventListener('click', (e) => { e.stopPropagation(); dismiss(); });
+  // also dismiss when they click the play button (they got the message)
+  media.addEventListener('click', dismiss);
+})();
 
   // ---- Project video lightbox (video-only popup) ----
 (function(){

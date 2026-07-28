@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Muntasir Mubin Nashit — Portfolio</title>
+<title>Muntasir Mubin Nashit</title>
+<meta name="description" content="Muntasir Mubin Nashit — MSc Computer Science student at the University of Manitoba researching Human-Robot Interaction (HRI), telepresence robot, and social robots in the HCI Lab.">
+<meta property="og:title" content="Muntasir Mubin Nashit">
+<meta property="og:description" content="MSc Computer Science student researching Human-Robot Interaction, telepresence robot, and social robots.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://muntasirnashit.com">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1089,7 +1094,8 @@
   // ---- First-visit video hint (scroll-into-view, dismissable, remembered) ----
 (function(){
   const media = document.getElementById('firstCourseVideo');
-  const hint  = document.getElementById('videoHint').classList.add('show');
+  const hint = document.getElementById('videoHint');
+  hint.classList.add('show');
   const close = document.getElementById('hintClose');
   if (!media || !hint) return;
 
